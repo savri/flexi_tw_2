@@ -1,0 +1,24 @@
+
+<div id="act_head_div">
+	<h4> Add Passage</h4>
+</div>
+<div id="status_msg">
+</div>
+<?php echo form_open();?>
+	<div id="act_body_div">
+		<div id="passage_div">
+			<p>
+				<label for="pass"> Passage: </label>
+				<textarea name="hester" id="content">Passage Text Here</textarea>      
+				<script type="text/javascript">
+				      CKEDITOR.replace('hester');
+				</script>					
+			</p>
+		</div>
+		<div id="pass_qs_div">
+			questions go here
+		</div>
+		<input type="button" id="savebtn" value="Save passage" />
+	</div>
+<?php echo form_close(); ?>
+
