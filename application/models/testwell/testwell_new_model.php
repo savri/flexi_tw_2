@@ -19,8 +19,8 @@ class Testwell_new_model extends CI_Model {
 		$p_arr=array();
 		$ans_arr=array();
 		
-		$user_id=$this->input->post('userId');
-		//$this->firephp->log($user_id);
+		$user_id=$this->tw_auth_utils_model->get_current_user_id();
+		$this->firephp->log("The user's id is=".$user_id);
 		
 		$test_type=$this->input->post('testType');
 		//$this->firephp->log($test_type);
@@ -67,10 +67,9 @@ class Testwell_new_model extends CI_Model {
 			//Also update the user's tests_taken table with this testId
 			//$this->firephp->log("About to record generated test");
 			$current_test_id=$this->testwell_record_model->record_generated_test($test_type,$q_arr,$p_arr);
-			
+			$this->firephp->log("Test created for userid= ".$user_id);
 			$this->testwell_record_model->record_test_taken_for_user($user_id,
 											$sect_arr,$current_test_id,$test_type,$this->input->post('timed_test_mode'));
-			//$this->firephp->log("Recorded $current_test_id for $user_id");
 			
 			//Now make up the data array to return
 			$data['sections']=$sect_arr;

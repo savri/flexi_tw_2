@@ -125,7 +125,7 @@ class Testwell_utils_model extends CI_Model {
 	 */
 	function get_current_section_for_user($user_id,$test_id){
 		$sec_info=array();
-		
+		//$this->firephp->log("Userid= ".$user_id." Test id= ".$test_id);
 		$in_table=TWELL_TEST_TAKE_TBL;
 		$this->db->where('internalAccountId',$user_id);
 		$this->db->where('testId',$test_id);

@@ -24,7 +24,8 @@ class Testwell_resume_model extends CI_Model {
 		$qid_list=array();
 		
 		$tid=$this->input->post('testId');
-		$uid=$this->input->post('userId');
+		$uid=$this->tw_auth_utils_model->get_current_user_id();
+		//$this->firephp->log("Userid= ".$uid);
 		$review_mode=$this->input->post('review_mode');
 		
 		//First determine the type of test
@@ -85,6 +86,7 @@ class Testwell_resume_model extends CI_Model {
 		//to see which section to display and also if they had timed the test
 		//If it is a timed test, get time remaining for section
 		$sec_data=$this->testwell_utils_model->get_current_section_for_user($uid,$tid);
+		//$this->firephp->log("time and sec data:");
 		//$this->firephp->log($sec_data);
 		
 		if ($sec_data['cur_section']<0){
@@ -105,6 +107,9 @@ class Testwell_resume_model extends CI_Model {
 		$data['time_left']=$sec_data['time_left'];
 		//$this->firephp->log("Resume model time left=".$data['time_left']);
 		//$this->firephp->log($data);
+		//$this->firephp->log("resume section id=".$data['cur_section']);
+		//$this->firephp->log("timed test=".$sec_data['timed_test_mode']);
+		
 		return $data;
 	}
 	/**

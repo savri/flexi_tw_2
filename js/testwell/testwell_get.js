@@ -16,19 +16,40 @@
 * --------------------------------------------------------
 **/
 function getCurrentUserId(){
-	return sessdata.flexi_auth.user_id;
+	return sess_data.flexi_auth.user_id;
 }
 function getCurrentUserEmail(){
-	return sessdata.flexi_auth.user_identifier;
+	return sess_data.flexi_auth.user_identifier;
 }
 function getCurrentUserType(){
 	//First convert the group object to array to get the first element
-	var xx = $.map(sessdata.flexi_auth.group, function(k, v) {
+	var xx = $.map(sess_data.flexi_auth.group, function(k, v) {
 	    return [k];
 	});
-	console.log("User type="+xx[0]);
-	
+	//console.log("User type="+xx[0]);
 	return xx[0];
+}
+function getChildrenData(){
+	$.ajax({
+        url: global_siteurl+'/testwell/testwell/get_children_data',
+        data: "",
+        dataType: 'json',
+        type: 'post',
+		async:false,
+        success: function (retval) {  
+			processGetChildrenData(retval);
+		}
+    });	
+}
+function processGetChildrenData(output){
+	//alert("Hi");
+	//c_data=$.makeArray(output.chidata);
+	var i=0;
+	var j=0;
+	for (i=0;i<output.chidata.length;i++){
+		chidata[i]=output.chidata[i];
+	}
+	//console.log(c_data[0]);
 }
 /** 
 * --------------------------------------------------------
@@ -97,12 +118,10 @@ function getAnswerChoices(qid,num_choices,sect_name) {
 * --------------------------------------------------------
 **/
 
-function getTestsForStudent(user_id) {
-	var form_data="";
-	form_data='userId='+user_id;
+function getTestsForStudent() {
 	$.ajax({
         url: global_siteurl+'/testwell/testwell/get_tests_for_student',
-        data: form_data,
+        data: "",
         dataType: 'json',
         type: 'post',
         success: function (retval) {   

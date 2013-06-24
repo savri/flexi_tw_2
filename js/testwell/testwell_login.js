@@ -92,7 +92,7 @@ function processLoginUser(output) {
 * Helper function to save the session data in a global
 **/
 function login_session_data(output){
-	sessdata=output.sessdata;//sessdata is a global
+	sess_data=output.sessdata;//sess_data is a global in testwell_global.js
 }
 /** 
 * --------------------------------------------------------
@@ -134,9 +134,8 @@ function processLogoutUser(output) {
 	$('#test_status').html("Cool web stuff").show();
 	$('#test_sections').html("").hide();
 	$('#account_admin_div').html("").hide();
-	//sessdata=NULL;
-	
-	console.log("Logged out");
+	closeOpenDialogs();	
+	//console.log("Logged out");
 }
 /** 
 * --------------------------------------------------------
@@ -190,6 +189,7 @@ function checkUserLoggedIn() {
         data: "",
 		dataType: 'json',
 		type: 'post',
+		async:"false",
         success: function (retval) {   
 			//alert(retval);
 			processCheckUserLoggedIn(retval);
@@ -212,7 +212,20 @@ function processCheckUserLoggedIn(output) {
 		if (output.isLoggedIn) {
 			sess_data=output.sessdata;
 			//console.log("Logged in Userid is:".$sessdata['user_id']);
-			getTestsForStudent(sess_data['user_id']);
+			if ($('#user_menu_div').length==0){
+				userMenuFormDisplay();
+			}
+			 var userType=getCurrentUserType();
+			//If student,determine tests for this user's internal account id
+			if (userType=="Student") {
+				getTestsForStudent();
+			} else if (userType=="Parent"){
+				//If parent, display summary progress view
+				//console.log("Parent logged in");
+				getSummaryForParent();
+			} else if (output.userType=="Admin"){
+				console.log("Admin logged in");
+			}
 		} else {
 			//console.log("Not logged in");
 			loginFormDisplay();
@@ -280,6 +293,7 @@ function userMenuFormDisplay() {
 	$.ajax({
         url: global_siteurl+'/testwell/testwell/user_menu_form',
         data: "",
+		async:false,
         success: function (retval) {   
 			processUserMenuFormDisplay(retval);
         },

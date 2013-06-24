@@ -20,7 +20,7 @@
 **/
 function reloadTest(test_id) {
 		//alert ("Reloading Test\n");
-		form_data='testId='+test_id+'&userId='+sess_data['user_id']+'&review_mode='+test_review_mode;
+		form_data='testId='+test_id+'&review_mode='+test_review_mode;
 		$.ajax({
 	        url: global_siteurl+'/testwell/testwell/reload_test',
 	        data: form_data,

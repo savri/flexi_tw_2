@@ -32,6 +32,7 @@
 	<script src="<?php echo base_url('js/testwell/testwell_timer.js');?>" type="text/javascript" charset="utf-8"></script>	
 	<script src="<?php echo base_url('js/testwell/testwell_register.js');?>" type="text/javascript" charset="utf-8"></script>	
 	<script src="<?php echo base_url('js/testwell/testwell_account_admin.js');?>" type="text/javascript" charset="utf-8"></script>	
+	<script src="<?php echo base_url('js/testwell/testwell_refresh.js');?>" type="text/javascript" charset="utf-8"></script>
 	
 </head>
 <body>

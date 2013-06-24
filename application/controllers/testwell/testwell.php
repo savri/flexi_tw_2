@@ -64,6 +64,32 @@ class Testwell extends CI_Controller {
 			//$this->response($output);
 	}
 	/**
+	 * Get a new test for this user. Return TRUE if successful
+	 * (along with an array with the test data), otherwise FALSE.
+	 *
+	 * @return	array
+	 */
+	function get_children_xxx_data() {
+		$output=array();
+		$cdata=$this->tw_auth_utils_model->get_children_data();
+		if (!empty($cdata)){
+			$output['status']=TRUE;
+			$output['cdata']=$cdata;
+		}else {
+			$output['status']=FALSE;
+			$output['error_message']="Could not retrieve children data";
+		}
+		//$this->firephp->log($output);
+		echo json_encode($output);
+	}
+	/**Get session data for user RETURN all userdata**/
+	function get_children_data(){
+		$output=array();
+		$chidata=$this->tw_auth_utils_model->get_children_data();
+		$output['chidata']=$chidata;
+		echo json_encode($output);
+	}
+	/**
 	 * Record a response made by user to a question. Return TRUE if successful
 	 * (along with info if the choice was the correct response to the question), 
 	 *  otherwise FALSE.
@@ -182,7 +208,7 @@ class Testwell extends CI_Controller {
 			$output['status']=TRUE;
 		//} else if ($this->tank_auth->is_logged_in()){
 		  } else {
-			$this->firephp->log("Not logged in");
+			//$this->firephp->log("Not logged in");
 			$output['sessdata']=$sessdata;
 			$output['isLoggedIn']=FALSE;
 			$output['status']=TRUE;
@@ -203,15 +229,24 @@ class Testwell extends CI_Controller {
 	 *
 	 * @return	array
 	 */
-	function user_menu_form(){
-		$user_type=$this->tw_auth_model->login_user_type();
-		if ($user_type=='Student'){
-			return ($this->load->view('flexi/tw_student_menu_view'));
-		} else {
-			$data['altExists']=$this->tw_admin_model->alt_par_exists();
-			return ($this->load->view('flexi/tw_parent_menu_view',$data));
+	function user_menu_form() {
+		if (!$this->flexi_auth->is_logged_in()) {
+			$this->firephp->log("Not logged in");
+			return $this->login_form();
 		}
-		return ($this->load->view('flexi/tw_user_menu_view'));
+		$user_type=$this->tw_auth_utils_model->login_user_type();
+		//$this->firephp->log("In user_menu_form");
+		if ($user_type=='Student'){
+			//$this->firephp->log("User type=".$user_type);
+			
+			return ($this->load->view('flexi/tw_student_menu_view'));
+		} else if ($user_type=='Parent') {
+			//$this->firephp->log("User type= ".$user_type);
+			
+			$data['altExists']=$this->tw_auth_utils_model->alt_par_exists(0);
+			//$this->firephp->log("Return parent form".$data['altExists']);
+			return ($this->load->view('flexi/tw_parent_menu_view',$data));
+		} 
 	}
 	
 	function login() {
@@ -228,10 +263,10 @@ class Testwell extends CI_Controller {
 				$output['isLoggedIn']=TRUE;
 				$output['sessdata']=$this->session->all_userdata();
 				//$output['userType']=
-					//$this->tw_auth_model->login_user_type($this->input->post('login_identity'));
+					//$this->tw_auth_utils_model->login_user_type($this->input->post('login_identity'));
 				//$this->firephp->log($output['userType']);			
 				$output['status']=TRUE;	
-				$this->firephp->log("Logged in");			
+				//$this->firephp->log("Logged in");			
 			} else {
 				$output['isLoggedIn']=FALSE;
 				$output['status']=FALSE;
@@ -380,7 +415,7 @@ class Testwell extends CI_Controller {
 			$output['message']=$this->data['message'];
 			$output['status']=FALSE;	
 		}
-		$this->firephp->log($output);
+		//$this->firephp->log($output);
 		echo json_encode($output);
 	}
 	###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++###	
@@ -399,13 +434,13 @@ class Testwell extends CI_Controller {
 	function change_password(){
 		$output=array();
 		$fflag=$this->input->post('form_flag');
-		$this->firephp->log("Form flag=".$fflag);
+		//$this->firephp->log("Form flag=".$fflag);
 		if ($fflag==0) {
 			$this->load->view('flexi/tw_change_password_view');
 		} else {
 			//Actual change of pword now
 			$res=$this->tw_auth_model->change_password();
-			$this->firephp->log("Changing password".$res);
+			//$this->firephp->log("Changing password".$res);
 			
 			if ($res) {
 				//First save any messages
@@ -419,7 +454,7 @@ class Testwell extends CI_Controller {
 				$output['message']=$this->data['message'];
 				$output['status']=FALSE;	
 			}
-			$this->firephp->log($output);
+			//$this->firephp->log($output);
 			echo json_encode($output);
 		}
 	}
@@ -431,19 +466,19 @@ class Testwell extends CI_Controller {
 	 *
 	 * @return	array
 	 */
-	function account_update(){
-		//$this->firephp->log("made it across!");
-		
+	function update_user_account(){
+		//$this->firephp->log("account_update!");
 		$output=array();
 		$user_data=array();
 		$fflag=$this->input->post('form_flag');
 		//$this->firephp->log("Form flag=".$fflag);
-		$user_type=$this->tw_auth_model->login_user_type();
-		$this->firephp->log("User is a ".$user_type);
+		$user_type=$this->tw_auth_utils_model->login_user_type();
+		//$this->firephp->log("User is a ".$user_type);
 		if ($fflag==0) {
 			//If the user is a parent, then display appropriate
 			//account form - changing address,email, etc
 			$res=$this->tw_admin_model->get_user_account_info($user_data);
+			//$this->firephp->log($user_data);
 			if ($res==1){
 				if ($user_type=='Student'){
 					return ($this->load->view('flexi/tw_student_ac_admin_view',$user_data));
@@ -460,11 +495,81 @@ class Testwell extends CI_Controller {
 			//We need to extract the field values and update database
 			$res=$this->tw_admin_model->update_account_info($user_type,$user_data);
 			if($res) {
-				$output['message']="Yay! Round trip!";
+				$output['message']="Account details successfully updated";
 				$output['status']=TRUE;
 			} else {
 				$output['message']=$this->data['message'];
 				$output['status']=FALSE;
+			}
+			echo json_encode($output);
+		}
+	}
+	/**
+	 * Parent requested account info change for child; if form_flag is not set, then 
+	 * just return the view to update account details; 
+	 * Otherwise process the input
+	 * with flex_aut lib call to change/update account details
+	 *
+	 * @return	array
+	 */
+	function update_children_account(){
+		$output=array();
+		$fflag=$this->input->post('form_flag');
+		$res=$this->tw_admin_model->update_children_account_info();
+		if($res) {
+			$output['message']="Children account details successfully updated";
+			$output['status']=TRUE;
+		} else {
+			$output['error']=$this->data['message'];
+			$output['status']=FALSE;
+		}
+		echo json_encode($output);
+		//$this->firephp->log("Hooray");
+	}
+	/**
+	 * Primary parent registers alternate parent email account
+	 * Activation email sent separately to alt parent email
+	 *
+	 * @return	array
+	 */
+	function register_alt_parent(){
+		$output=array();
+		$fflag=$this->input->post('form_flag');
+		if ($fflag==0) {
+			return ($this->load->view('flexi/tw_add_alt_parent_view'));
+		} else {
+			$res=$this->tw_auth_model->register_alt_parent();
+			if($res) {
+				$output['message']="Alternate parent account successfully created";
+				$output['status']=TRUE;
+			} else {
+				$output['message']=$this->data['message'];
+				$output['status']=FALSE;
+			}
+			echo json_encode($output);
+		}
+	}
+	/**
+	 * Primary/Alt parent registers add'l child
+	 * Activation email sent separately to child email
+	 *
+	 * @return	array
+	 */
+	function register_child() {
+		$output=array();
+		$fflag=$this->input->post('form_flag');
+		if ($fflag==0) {
+			//$this->firephp->log("About to return child view");
+			return ($this->load->view('flexi/tw_add_child_view'));
+		} else {
+			$ret=$this->tw_auth_model->register_child();
+			if ($ret) {			
+				//$this->firephp->log("Hooray");
+				$output['status']=TRUE;
+				$output['message']="Well done";
+			} else {
+				$output['status']=FALSE;
+				$output['message']=$this->data['message'];
 			}
 			echo json_encode($output);
 		}

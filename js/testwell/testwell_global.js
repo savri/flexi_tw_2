@@ -31,3 +31,6 @@ var timer_start_flag=false;//To track if they are starting or resuming the timer
 var timer_init_time=0;//When you resume/start a test where you start counting from - maybe able to get rid of this global --Maya
 var cur_section;//section currently being displayed;=1 for a new test;
 var section_duration=new Array();
+
+//Children data
+var chidata= new Array();

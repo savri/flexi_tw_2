@@ -118,7 +118,7 @@ function mass_modify_load_question_handler() {
 */
 function mass_modify_save_handler() {
 	$('#qa_body_div').delegate('#editallsavebtn', 'click', function() {
-		console.log("save question and get enxt");
+		//console.log("save question and get enxt");
 		save_updated_question();
 	});
 }
@@ -143,7 +143,7 @@ function mass_modify_save_handler() {
 */
 function mass_modify_fetch_next_10_handler() {
 	$('#qa_body_div').delegate('#editallnext10btn', 'click', function() {
-		console.log(" Get next 10 qs");
+		//console.log(" Get next 10 qs");
 		if (mmodify_cur_q_count==mmodify_total_q_count){
 			mmodify_cur_q_count=0;
 			$('#edit_all_msg_div').html("No more questions in this section matching your criteria").show();
@@ -205,7 +205,7 @@ function save_passage_handler() {
 	$('#qa_body_div').delegate('#savepassagebtn', 'click', function() {  
 		//alert("About to submit");
 		selected=[];
-		console.log(selected);
+		//console.log(selected);
 		
 		$("input:checkbox[name='qopts']:checked").each(function() {
 		       selected.push($(this).val());

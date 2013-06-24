@@ -79,7 +79,7 @@ function processGenerateNewTest(rval,test_type) {
 }
 function generateNewTest(user_id,test_type) {
 	var form_data;
-	console.log("Testtype="+test_type);
+	//console.log("Testtype="+test_type);
 	form_data='userId='+user_id+'&testType='+test_type;
 	$.ajax({
         url: global_siteurl+'/testwell/testwell/get_new_test',

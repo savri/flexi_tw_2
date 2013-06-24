@@ -166,7 +166,7 @@ class Testwell extends CI_Controller {
 			$output['isLoggedIn']=FALSE;
 			$output['status']=TRUE;
 		} else if ($this->tank_auth->is_logged_in()){
-			$this->firephp->log("Logged in Userid is:".$sessdata['user_id']);
+			//$this->firephp->log("Logged in Userid is:".$sessdata['user_id']);
 			$output['isLoggedIn']=TRUE;
 			$output['sessdata']=$sessdata;
 			$output['status']=TRUE;
@@ -187,26 +187,26 @@ class Testwell extends CI_Controller {
 	function login() {
 		$output=array();
 		
-		$this->firephp->log("In login");	
+		//$this->firephp->log("In login");	
 		if ($this->input->is_ajax_request()){
 			$remember_user = ($this->input->post('remember_me') == 1);
 			// Verify login data.
 			$result= $this->flexi_auth->login($this->input->post('login_identity'), 
 									$this->input->post('login_password'), $remember_user);
-			$this->firephp->log("Login result=".$result);	
+			//$this->firephp->log("Login result=".$result);	
 			if ($result==1) {
 				$sessdata=$this->session->all_userdata();
 				$output['isLoggedIn']=TRUE;
 				$output['sessdata']=$sessdata;
 				$output['status']=TRUE;	
-				$this->firephp->log("Logged in");	
+				//$this->firephp->log("Logged in");	
 				
 			} else {
 				$output['isLoggedIn']=FALSE;
 				$output['status']=FALSE;
 				$output['err_message']=$this->flexi_auth->get_messages();
 			}
-			$this->firephp->log($output);
+			//$this->firephp->log($output);
 			
 			echo json_encode($output);
 			//die($this->flexi_auth->is_logged_in()); //need to figure out die
@@ -249,7 +249,7 @@ class Testwell extends CI_Controller {
 		
 		//$this->load->library('flexi_auth');
 		$xx=$this->input->post('register_user');
-		$this->firephp->log("register_user=".$xx);
+		//$this->firephp->log("register_user=".$xx);
 		// Redirect user away from registration page if already logged in.
 		if ($this->flexi_auth->is_logged_in()) 
 		{

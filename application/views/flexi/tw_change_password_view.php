@@ -1,11 +1,11 @@
-<div id="pw_change_dialog" class="admin_overlay" style="border:1px solid black;background-color:white">
+<div id="pw_chg_form" class="admin_overlay" style="border:1px solid black;background-color:MistyRose">
 	<fieldset>
 
 	<h2>Change password</h2>
 
-	<div id="pw_change_message" style="color:red">
+	<div id="pw_chg_message" style="color:red">
 	</div>
-	<div id="pw_change_body">
+	<div id="pw_chg_body">
 		<fieldset>
 			<?php echo form_open(current_url());?>  
 					<strong>You need to re-enter your current password first in order to 

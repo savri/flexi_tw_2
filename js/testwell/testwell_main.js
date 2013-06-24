@@ -12,13 +12,26 @@
 **/
 //This is the main() for the program
 $(document).ready(function() {
-	//Register all event handlers in testwell
-	//with delegate you can register them even before they are created
-	registerEventHandlers();
-	if (($('#act_pw').length>0) && ($('#act_pw').val()=='activation_pw')){
-		$('#login_dive').html('');
+
+
+	$(window).bind('beforeunload', function(){ 
+		return 'Really want to leave?';
+	});	
+	
+	//check onhashchange later
+	
+	if (window.location.hash){
+		tw_refresh();
 	} else {
-		checkUserLoggedIn();
-	}
+		//They are logging in the first time
+		//Register all event handlers in testwell
+		//with delegate you can register them even before they are created
+		registerEventHandlers();
+		if (($('#act_pw').length>0) && ($('#act_pw').val()=='activation_pw')){
+			$('#login_dive').html('');
+		} else {
+			checkUserLoggedIn();
+		}
+	}	
 	
 });

@@ -302,6 +302,20 @@ function showSectionTitleAndTimer(sec_count) {
 
 	
 }
+function closeOpenDialogs(){
+	//Close all dialog windows
+	$(".ui-dialog-content").dialog("destroy");
+	$('#account_admin_div').html("");
+	if ($('#pw_chg_form').length)
+			$('#pw_chg_form').remove();
+	if ($('#account_update_form').length)
+			$('#account_update_form').remove();;
+	if ($('#reg_child_form').length)
+			$('#reg_child_form').remove();
+	if ($('#children_ac_form').length)
+			$('#children_ac_form').remove();
+	
+}
 	
 /** 
 * --------------------------------------------------------

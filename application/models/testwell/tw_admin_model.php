@@ -8,8 +8,6 @@ class Tw_admin_model extends CI_Model {
 		$CI =& get_instance();
 		return $CI->$key;
 	}
-	
-
 	###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++###	
 	// Get user account related info
 	###++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++###	
@@ -19,8 +17,11 @@ class Tw_admin_model extends CI_Model {
 	 * Depending on their role. get more info from family_profile
 	**/
 	function get_user_account_info(&$user_data){
-		$id=$this->get_current_user_id();
-		$role=$this->get_user_role($id);
+		$id=$this->tw_auth_utils_model->get_current_user_id();
+		$this->firephp->log("Id=".$id);
+		$role=$this->tw_auth_utils_model->get_user_role($id);
+		$this->firephp->log("role=".$role);
+		
 		if($role=="Parent"){
 			$user_data['group']="Parent";
 			//Now look up family profile table for name, address etc
@@ -29,19 +30,8 @@ class Tw_admin_model extends CI_Model {
 			$user_data['group']="Student";
 			$res=$this->get_student_info($user_data,$id);
 		}
-		$this->firephp->log($user_data);
+		//$this->firephp->log($user_data);
 		return $res;//Success/fail status; $user_data is filled out
-	}
-	/**
-	 * get_current_user_id()
-	 * Retrieve the internal user id for the current user
-	 * return (int) user_id on success; 0 on failure
-	**/
-	function get_current_user_id(){
-		$sd=$this->session->all_userdata();
-		$fa=$sd['flexi_auth'];
-		$email=$fa['user_identifier'];
-		return $fa['user_id'];
 	}
 	/**
 	 * get_family_info()
@@ -49,51 +39,61 @@ class Tw_admin_model extends CI_Model {
 	 * return filled out user_data array();
 	**/
 	function get_family_info(&$f_info,$uacc_id){
-		
-		$is_pri=$this->is_primary_parent($uacc_id);
+		//$this->firephp->log("In get_family_info");
+		$is_pri=$this->tw_auth_utils_model->is_primary_parent($uacc_id);
+		//$this->firephp->log("id ".$uacc_id);
+		//$this->firephp->log("is_pri ".$is_pri);
 		$res=$this->get_family_profile($is_pri,$uacc_id,$f_info);
 		if ($res){
 			//Look up the user_accounts table to get the email addresses
 			//for the primary and alt (if any) parent ids
-			if ($is_pri) {
+			if ($is_pri==1) {
 				//User id is the primary parent
-				$xx=$this->tw_auth_model->get_user_email_from_id($uacc_id);
-				if ($xx) {
-					$f_info['pri_p_email']=$xx;
+				$p_email=$this->tw_auth_utils_model->get_user_email_from_id($uacc_id);
+				if ($p_email) {
+					$f_info['pri_p_email']=$p_email;
 				}else {
 					$this->firephp->log("Unable to get primary parent email. Problem!");
 					return FALSE;
 				}
-				$alt_id=$this->get_alt_par_id($uacc_id);
+				$alt_id=$this->tw_auth_utils_model->get_alt_par_id($uacc_id);
+				//$this->firephp->log("Alt id=".$alt_id);
+				$f_info['alt_p_email']="";
 				if ($alt_id>0){
-					$xx=$this->tw_auth_model->get_user_email_from_id($alt_id);
-					if ($xx) {
-						$f_info['alt_p_email']=$xx;
+					$p_email=$this->tw_auth_utils_model->get_user_email_from_id($alt_id);
+					if ($p_email) {
+						$f_info['alt_p_email']=$p_email;
 					}else {
 						$this->firephp->log("Unable to get alt parent email. Problem!");
 						return FALSE;
 					}
-					$this->firephp->log($f_info);
-					return TRUE;
 				}
-			} else {
+				//$this->firephp->log($f_info);
+				return TRUE;
+			} else if ($is_pri==2) {
 				//User id is the alt parent
-				$pri_id=$this->get_pri_par_id($uacc_id);
-				$xx=$this->tw_auth_model->get_user_email_from_id($pri_id);
-				if ($xx) {
-					$f_info['pri_p_email']=$xx;
+				//$this->firephp->log("alt parent getting info");
+				$pri_id=$this->tw_auth_utils_model->get_pri_par_id($uacc_id);
+				//$this->firephp->log("Pri id= ".$pri_id);
+				
+				$p_email=$this->tw_auth_utils_model->get_user_email_from_id($pri_id);
+				//$this->firephp->log("Pri email= ".$p_email);
+				if ($p_email) {
+					$f_info['pri_p_email']=$p_email;
 				}else {
 					$this->firephp->log("Unable to get primary parent email. Problem!");
 					return FALSE;
 				}
-				$xx=$this->tw_auth_model->get_user_email_from_id($alt_id);
-				if ($xx) {
-					$f_info['alt_p_email']=$xx;
+				$p_email=$this->tw_auth_utils_model->get_user_email_from_id($uacc_id);
+				//$this->firephp->log("Alt email= ".$p_email);
+				
+				if ($p_email) {
+					$f_info['alt_p_email']=$p_email;
 				}else {
 					$this->firephp->log("Unable to get alt parent email. Problem!");
 					return FALSE;
 				}
-				$this->firephp->log($f_info);
+				//$this->firephp->log($f_info);
 				return TRUE;
 			}
 		} else {
@@ -118,14 +118,14 @@ class Tw_admin_model extends CI_Model {
 			$s_info['s_l_name']=$row['studentLastName'];
 			$s_info['grade']=$row['grade'];
 			//Look up the user_accounts table to get the email address 
-			$xx=$this->tw_auth_model->get_user_email_from_id($uacc_id);
-			if ($xx){
-				$s_info['s_email']=$xx;
+			$s_email=$this->tw_auth_utils_model->get_user_email_from_id($uacc_id);
+			if ($s_email){
+				$s_info['s_email']=$s_email;
 			} else {
 				$this->firephp->log("Unable to retrieve student email. Problem!");
 				return FALSE;
 			}
-			$this->firephp->log($s_info);
+			//$this->firephp->log($s_info);
 			return TRUE;//Success! student data retrieved and populated
 		} else {
 			$this->firephp->log("Student information for this student not found. Problem!");
@@ -133,136 +133,22 @@ class Tw_admin_model extends CI_Model {
 		}
 	}
 	/**
-	 * update_account_info(&$f_info)
-	 * Update changeable family information from submitted values
-	 * parameters f_info array() to be filled out
-	 * return  success/failure; f_info array() filled out;
+	* get_children_profile()
+	* Utility function to retrieve all children in a family based on the logged
+	* in parent's internal user id 
+	* Return  in cdata array() with children's name, email, grade, test details
 	**/
-	function update_account_info($user_type,&$f_info){
-		//$this->firephp->log("In update_account_info".$user_type);
-		// Set & Run the validation.
-		$this->set_update_form_validation($user_type);
-		//$this->firephp->log("Validationresult= ".$this->form_validation->run());
-		if ($this->form_validation->run()) {
-			//Since validation is successful, update the tables
-			//$this->firephp->log("Validation success");
-			$cur_id=$this->get_current_user_id();
-			$data=$this->get_update_form_input_data($user_type);
-		
-			if ($user_type=="Parent") {
-				//find out if this id belongs to primary or alt parent
-				$is_primary_par=$this->is_primary_parent($cur_id);
-				if ($is_primary_par==1){
-					//$this->firephp->log("Primary parent");
-					//Update family data
-					$res=$this->update_family_profile('parentPrimary_uacc_id',$cur_id,$data);
-					if (!$res) {
-						//$this->firephp->log($this->db->_error_message());
-						//$this->firephp->log($this->db->_error_number());
-						$this->firephp->log("Issues during update of family profile  Problem!");
-						return FALSE;
-					}
-					//Now update primary parent email
-					//$this->firephp->log($this->input->post('update_pri_p_email'));
-					$res=$this->update_email($cur_id,$this->input->post('update_pri_p_email'));
-					if (!$res) {
-						//$this->firephp->log($this->db->_error_message());
-						//$this->firephp->log($this->db->_error_number());
-						$this->firephp->log("Issues during update of primary parent email  Problem!");
-						return FALSE;
-					}
-					//If there is an alt parent email that can be updated it do it
-					if ($this->alt_par_exists()==1){
-						$alt_par_id=$this->get_alt_parent_id($cur_id);
-						$res=$this->update_email($alt_par_id,$this->input->post('update_alt_p_email'));
-						if (!$res) {
-							//$this->firephp->log($this->db->_error_message());
-							//$this->firephp->log($this->db->_error_number());
-							$this->firephp->log("Issues during update of alternate parent email  Problem!");
-							return FALSE;
-						}
-						return TRUE;
-					}
-				} else if ($is_primary_par==2) {
-					$this->firephp->log("alt parent");
-
-				} else if ($is_primary_par==0) {
-					$this->firephp->log("Unable to determine primary/alt parent; Problem!");
-					return FALSE;
-				} 
-			} else if ($user_type=="Student") {
-				//Update student data
-				$res=$this->update_student_profile($cur_id,$data);
-				if (!$res) {
-					//$this->firephp->log($this->db->_error_message());
-					//$this->firephp->log($this->db->_error_number());
-					$this->firephp->log("Issues during update of student profile  Problem!");
-					return FALSE;
-				}
-				//Now update student email
-				//$this->firephp->log($this->input->post('update_s_email'));
-				$res=$this->update_email($cur_id,$this->input->post('update_s_email'));
-				if (!$res) {
-					//$this->firephp->log($this->db->_error_message());
-					//$this->firephp->log($this->db->_error_number());
-					$this->firephp->log("Issues during update of student email  Problem!");
-					return FALSE;
-				}
-				return TRUE;
-			}
-		}		
-		// Set validation errors.
-		$this->firephp->log(validation_errors('<p class="error_msg">', '</p>'));
-		$this->data['message'] = validation_errors('<p class="error_msg">', '</p>');
-		return FALSE;	
-	}
-	/**
-	* is_primary_parent($p_id)
-	* Utility function to determine if this uid belongs to the primary or alt parent
-	* Return 1 if primary; 2 if alt; 0 if error
-	**/
-	function is_primary_parent($p_id){
-		$this->db->where('parentPrimary_uacc_id',$p_id);
-		$this->db->or_where('parentAlt_uacc_id',$p_id);
-		$this->db->select('parentPrimary_uacc_id');
-		$res=$this->db->get(TWELL_FAM_PROF_TBL);
-		if ($res->num_rows()==1) {
-			$fam_profile=$res->row();
-			If (intval($fam_profile->parentPrimary_uacc_id)==intval($p_id)) {
-				$this->firephp->log("Primary parent!");
-				return 1;
-			} else {
-				$this->firephp->log("Alt parent!");
-				return 2;
-			}
+	function get_children_profile() {
+		$f_data=array();
+		$par_id=$this->tw_auth_utils_model->get_current_user_id();
+		$f_id=$this->tw_auth_utils_model->get_family_id($par_id);
+		$cres=$this->tw_auth_utils_model->get_family_children($f_id,$f_data);
+		//$this->firephp->log("Result of children= ".$cres);
+		if ($cres){
+			//$this->firephp->log($f_data);
+			return $f_data;
 		} else {
-			$this->firephp->log("Not able to determine primary/alt parent status for uid".$p_id);
-			return 0;
-		}
-	}
-	/**
-	* get_user_role($id)
-	* Utility function to determine if user is parent or student
-	* or admin
-	* Return "Parent"/"Student"/Admin on success; NULL on fail
-	**/
-	function get_user_role($u_id){
-		$this->db->select($this->flexi_auth->db_column('user_acc', 'group_id'));	
-		$this->db->where($this->flexi_auth->db_column('user_acc', 'id'),$u_id);	
-		$qres=$this->db->get($this->auth->tbl_user_account);
-		if ($qres->num_rows() > 0) {
-			$row=$qres->row_array();
-			//$this->firephp->log($row['uacc_group_fk']."for email=".$email);
-			switch ($row['uacc_group_fk']){
-				case (1):
-					return "Parent";
-				case (2):
-					return "Student";
-				case (3):
-					return "Admin";
-				default:
-					return NULL;
-			}
+			return NULL;
 		}
 	}
 	/**
@@ -297,101 +183,6 @@ class Tw_admin_model extends CI_Model {
 		}
 	}
 	/**
-	* update_family_profile($which_parent,$id,$data)
-	* Utility function update family profile info based on the logged
-	* in parent's internal user id
-	* Return true/false
-	**/
-	function update_family_profile($which_parent,$id,$data){
-		$this->db->where($which_parent,$id);
-		$this->firephp->log($data);
-		return ($this->db->update(TWELL_FAM_PROF_TBL,$data));
-	}
-	/**
-	* update_student_profile($id,$data)
-	* Utility function update student profile info b
-	* Return true/false
-	**/
-	function update_student_profile($id,$data){
-		$this->firephp->log("Student profile update");
-		$this->firephp->log($id);
-		$this->firephp->log($data);
-		$this->db->where('uacc_id',$id);
-		$this->firephp->log($data);
-		return ($this->db->update(TWELL_STU_PROF_TBL,$data));
-	}
-	/**
-	* update_email($id,$email)
-	* Utility function update email address of user
-	* Return true/false
-	**/
-	function update_email($id,$email){
-		//Figgure out a way to check if it's same as what's in the database later.
-		//Also send out email - but to whom?
-		$edata=array(
-			$this->flexi_auth->db_column('user_acc', 'email')=>$email,
-			);
-		$this->firephp->log($edata);
-		return ($this->flexi_auth->update_user($id, $edata));
-	}
-	/**
-	* get_alt_par_id($pri_id)
-	* Utility function to return user id of alt_parent based on
-	* on user_id of pri_parent
-	* returns (int) alt_par_id on success and 0 on fail
-	**/
-	function get_alt_par_id($pri_id){
-		$this->db->where('parentPrimary_uacc_id',$pri_id);
-		$this->db->select('parentAlt_uacc_id',$pri_id);
-		
-		$qres=$this->db->get(TWELL_FAM_PROF_TBL);
-		if ($qres->num_rows()==1) {
-			$row=$qres->row();
-			return ($row->parentAlt_uacc_id);
-		}else{
-			$this->firephp->log("Could not retrieve alt_parent user id");
-			return 0;
-		}
-	}
-	/**
-	* get_pri_par_id($alt_id)
-	* Utility function to return user id of pri_parent based on
-	* on user_id of alt_parent
-	* returns (int) pri_par_id on success and 0 on fail
-	**/
-	function get_pri_par_id($alt_id){
-		$this->db->where('parentAlt_uacc_id',$pri_id);
-		$this->db->select('parentPrimary_uacc_id',$pri_id);
-		
-		$qres=$this->db->get(TWELL_FAM_PROF_TBL);
-		if ($qres->num_rows()==1) {
-			$row=$qres->row();
-			return ($row->parentPrimary_uacc_id);
-		}else{
-			$this->firephp->log("Could not retrieve pri_parent user id");
-			return 0;
-		}
-	}
-	/**
-	* alt_par_exists()
-	* Utility function to determine if an alt parent account has been set up
-	* returns 1 if account exists;0 if account does not exist
-	**/
-	function alt_par_exists(){
-		$cur_id=$this->get_current_user_id();
-		$pri_par=$this->is_primary_parent($cur_id);
-		if ($pri_par){
-			$alt_par_id=$this->get_alt_par_id($cur_id);
-			if ($alt_par_id==0)
-				return 0;
-			else
-				return 1;
-		} else {
-			return 1;
-		}
-		
-	}
-	/**
 	* get_update_form_input_data($user_role)
 	* Utility function extract the input field values depending
 	* on role of user
@@ -417,6 +208,240 @@ class Tw_admin_model extends CI_Model {
 			);
 		}
 		return $data;
+	}
+	/**
+	 * update_account_info(&$f_info)
+	 * Update changeable family information from submitted values
+	 * parameters f_info array() to be filled out
+	 * return  success/failure; f_info array() filled out;
+	**/
+	function update_account_info($user_type,&$f_info){
+		//$this->firephp->log("In update_account_info ".$user_type);
+		// Set & Run the validation.
+		$this->set_update_form_validation($user_type);
+		//$this->firephp->log("Validationresult= ".$this->form_validation->run());
+		if ($this->form_validation->run()) {
+			
+			//Since validation is successful, update the tables
+			$cur_id=$this->tw_auth_utils_model->get_current_user_id();
+			$data=$this->get_update_form_input_data($user_type);
+			
+			if ($user_type=="Parent") {
+				//find out if this id belongs to primary or alt parent
+				$is_primary_par=$this->tw_auth_utils_model->is_primary_parent($cur_id);
+				if ($is_primary_par==1){
+					//Update family data
+					$res=$this->update_family_profile('parentPrimary_uacc_id',$cur_id,$data);
+					//$this->firephp->log("Update family profile result= ".$res);
+					
+					if (!$res) {
+						//$this->firephp->log($this->db->_error_message());
+						//$this->firephp->log($this->db->_error_number());
+						$this->firephp->log("Issues during update of family profile  Problem!");
+						return FALSE;
+					}
+					
+					//Now update primary parent email if it has changed from what's on record
+					//$this->firephp->log($this->input->post('update_pri_p_email'));
+					$res=$this->update_pri_par_email($cur_id);
+					if (!$res){
+						return FALSE;//updating of primary email failed
+					}
+					//If there is an alt parent email that can be updated it do it
+					$alt_par_id=$this->tw_auth_utils_model->alt_par_exists($cur_id);
+					if ($alt_par_id>0){
+						$res=$this->update_alt_par_email($alt_par_id);
+						if (!$res){
+							return FALSE;//updating of alt email failed
+						}
+					}
+					return TRUE;
+				} else if ($is_primary_par==2) {
+					//$cur_id belongs to alt parent
+					$this->firephp->log("alt parent");
+					$res=$this->update_family_profile('parentAlt_uacc_id',$cur_id,$data);
+					if (!$res) {
+						//$this->firephp->log($this->db->_error_message());
+						//$this->firephp->log($this->db->_error_number());
+						$this->firephp->log("Issues during update of family profile  Problem!");
+						return FALSE;
+					}
+					//Update alt parent email
+					//$this->firephp->log($this->input->post('update_alt_p_email'));
+					$res=$this->update_alt_par_email($cur_id);
+					if (!$res){
+						return FALSE;//updating of alt email failed
+					}
+					
+					//Update primary parent email if changed
+					$pri_par_id=$this->tw_auth_utils_model->get_pri_par_id($cur_id);
+					$res=$this->update_pri_par_email($pri_par_id);
+					if (!$res){
+						return FALSE;//updating of primary email failed
+					}
+					//All updated successfully
+					return TRUE;
+
+				} else if ($is_primary_par==0) {
+					$this->firephp->log("Unable to determine primary/alt parent; Problem!");
+					return FALSE;
+				} 
+			} else if ($user_type=="Student") {
+				//Update student data
+				$res=$this->update_student_profile($cur_id,$data);
+				if (!$res) {
+					//$this->firephp->log($this->db->_error_message());
+					//$this->firephp->log($this->db->_error_number());
+					$this->firephp->log("Issues during update of student profile  Problem!");
+					return FALSE;
+				}
+				//Now update student email
+				//$this->firephp->log($this->input->post('update_s_email'));
+				$res=$this->update_email($cur_id,$this->input->post('update_s_email'));
+				if (!$res) {
+					//$this->firephp->log($this->db->_error_message());
+					//$this->firephp->log($this->db->_error_number());
+					$this->firephp->log("Issues during update of student email  Problem!");
+					return FALSE;
+				}
+				return TRUE;
+			}
+		}		
+		// Set validation errors.
+		$this->firephp->log(validation_errors('<p class="error_msg">', '</p>'));
+		$this->data['message'] = validation_errors('<p class="error_msg">', '</p>');
+		return FALSE;	
+	}
+
+	/**
+	 * update_pri_par_email($pri_par_id)
+	 * Update primary parent email if it's changed from whats in the database
+	**/
+	function update_pri_par_email($pri_par_id){
+		$old_pri_p_email=$this->tw_auth_utils_model->get_user_email_from_id($pri_par_id);
+		$eres=strcmp($old_pri_p_email,$this->input->post('update_pri_p_email'));
+		//$this->firephp->log("REsult of old/new email pri comp= ".$eres);
+		if ($eres !=0) {
+			$res=$this->update_email($pri_par_id,$this->input->post('update_pri_p_email'));
+			if (!$res) {
+				//$this->firephp->log($this->db->_error_message());
+				//$this->firephp->log($this->db->_error_number());
+				$this->firephp->log("Issues during update of primary parent email  Problem!");
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+	/**
+	 * update_alt_par_email($alt_par_id)
+	 * Update alternate parent email if it's changed from whats in the database
+	**/
+	function update_alt_par_email($alt_par_id){
+		$old_alt_p_email=$this->tw_auth_utils_model->get_user_email_from_id($alt_par_id);
+		$eres=strcmp($old_alt_p_email,$this->input->post('update_alt_p_email'));
+		//$this->firephp->log("REsult of old/new email alt comp= ".$eres);
+		if ($eres !=0){
+			$res=$this->update_email($alt_par_id,$this->input->post('update_alt_p_email'));
+			if (!$res) {
+				//$this->firephp->log($this->db->_error_message());
+				//$this->firephp->log($this->db->_error_number());
+				$this->firephp->log("Issues during update of alternate parent email  Problem!");
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+
+	/**
+	* update_family_profile($which_parent,$id,$data)
+	* Utility function update family profile info based on the logged
+	* in parent's internal user id
+	* Return true/false
+	**/
+	function update_family_profile($which_parent,$id,$data){
+		$this->db->where($which_parent,$id);
+		//$this->firephp->log("Updating family profile");
+		$this->firephp->log($data);
+		$res=$this->db->update(TWELL_FAM_PROF_TBL,$data);
+		$this->firephp->log("Res=".$res);
+		
+		return $res;
+		
+	}
+	/**
+	* update_student_profile($id,$data)
+	* Utility function update student profile info b
+	* Return true/false
+	**/
+	function update_student_profile($id,$data){
+		$this->firephp->log("Student profile update");
+		$this->db->where('uacc_id',$id);
+		return ($this->db->update(TWELL_STU_PROF_TBL,$data));
+	}
+	/**
+	* update_email($id,$email)
+	* Utility function update email address of user
+	* Return true/false
+	**/
+	function update_email($id,$email){
+		//Figgure out a way to check if it's same as what's in the database later.
+		//Also send out email - but to whom?
+		$edata=array(
+			$this->flexi_auth->db_column('user_acc', 'email')=>$email,
+			);
+		//$this->firephp->log($edata);
+		return ($this->flexi_auth->update_user($id, $edata));
+	}
+	/**
+	 * update_children_account_info()
+	 * Update children information from submitted values
+	 * parameters 
+	 * return  success/failure; f_info array() filled out;
+	**/
+	function update_children_account_info(){
+		//$this->firephp->log("In update_account_info ".$user_type);
+		// Set & Run the validation.
+		$this->set_children_update_form_validation();
+		$this->firephp->log("Validationresult= ".$this->form_validation->run());
+		if ($this->form_validation->run()) {
+			//$this->firephp->log("validation pass!");
+			$data=array();
+			//Since validation is successful, update the tables
+			$cur_id=$this->tw_auth_utils_model->get_current_user_id();
+			//$fam_id=$this->tw_auth_utils_model->get_family_id($cur_id);
+			$num_chi=$this->input->post('num_chi');
+			for ($i=0; $i<$num_chi;$i++){
+				$chi_id=$this->input->post(('child_id'.$i));
+				$chi_email=$this->input->post(('child_s_email'.$i));
+				$data['studentFirstName']=$this->input->post(('child_s_f_name'.$i));
+				$data['studentLastName']=$this->input->post(('child_s_l_name'.$i));
+				$data['grade']=$this->input->post(('child_s_grade'.$i));
+				$data['testType']=$this->input->post(('child_s_ttype'.$i));
+				$this->firephp->log("Child id=".$chi_id);
+				$this->firephp->log("Child email=".$chi_email);
+				$this->firephp->log($data);
+				//Update student profile data
+				$res=$this->update_student_profile($chi_id,$data);
+				if (!$res){
+					$this->firephp->log("Unable to update child info for child id=".$chi_id);
+					return FALSE;
+				}
+				//Update student email
+				$res=$this->update_email($chi_id,$chi_email);
+				if (!$res){
+					$this->firephp->log("Unable to update child email for child id=".$chi_id);
+					return FALSE;
+				}
+			}
+			$this->firephp->log("Updated kids");
+			return TRUE;
+
+		}	
+		// Set validation errors.
+		//$this->firephp->log("validation failed!");
+		$this->firephp->log(validation_errors('<p class="error_msg">', '</p>'));
+		$this->data['message'] = validation_errors('<p class="error_msg">', '</p>');
+		return FALSE;	
 	}
 	/**
 	* set_update_form_validation()
@@ -451,7 +476,24 @@ class Tw_admin_model extends CI_Model {
 		}
 		$this->form_validation->set_rules($validation_rules);
 	}
-	
+
+	/**
+	* set_children_update_form_validation()
+	* Utility function to set up the validation
+	* rules for the children update form
+	* returns void
+	**/
+	function set_children_update_form_validation(){	
+		$num_chi=$this->input->post('num_chi');
+		//$this->firephp->log("Num kids=".$num_chi);
+		for ($i=0; $i<$num_chi;$i++){
+			$this->form_validation->set_rules(('child_s_f_name'.$i), 'First Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules(('child_s_l_name'.$i), 'Last Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules(('child_s_email'.$i), 'Email', 'required|valid_email|identity_avaialable');
+			$this->form_validation->set_rules(('child_s_grade'.$i), 'Grade', 'required|numeric');
+			$this->form_validation->set_rules(('child_s_ttype'.$i), 'Test type', 'required');
+		}
+	}
 }
 /* End of file tw_admin_model.php */
 /* Location: ./application/models/testwell/tw_admin_model.php */

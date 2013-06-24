@@ -22,13 +22,16 @@ function registerEventHandlers() {
 	returnEventHandler();
 	registerFormEventHandler();
 	registerUserEventHandler();
+	registerAltParentEventHandler();
+	registerChildEventHandler();	
 	loginEventHandler();
 	logoutEventHandler();
-	passwordActivationEventHandler();
-	passwordFormEventHandler();
+	activatePasswordEventHandler();
 	timerStartEventHandler();
 	timerStopEventHandler();
-	accountFormEventHandler();	
+	updatePasswordEventHandler();
+	updateAccountEventHandler();
+	updateChildrenEventHandler();
 }
 /**
 * ----------------------------------------------------------
@@ -73,6 +76,7 @@ function resumeTestEventHandler() {
 		var tid=$(this).attr('id');
 		//Set global variable for review to false since we're resuming
 		test_review_mode=false;
+		//Record this for refreshing recall
 		//retrieve and display test with tid
 		//alert("About to display test id="+tid);
 		reloadTest(tid);
@@ -249,7 +253,7 @@ function logoutEventHandler() {
 * @return void
 * ----------------------------------------------------------
 */
-function passwordActivationEventHandler() {
+function activatePasswordEventHandler() {
 	$('#account_admin_div').delegate('#changepwbtn', 'click', function() {  
 		activatePassword();
 	});
@@ -287,15 +291,16 @@ function timerStopEventHandler() {
 }
 /**
 * ----------------------------------------------------------
-* Handler to display change password form for user
+* Handler to display update password form for user
 * Need to think more about exceptions --Maya Jan '2013
 *
 * @return void
 * ----------------------------------------------------------
 */
-function passwordFormEventHandler() {
-	$('#login_dive').delegate('#change_pw_form', 'click', function() {  
+function updatePasswordEventHandler() {
+	$('#login_dive').delegate('#pw_chg', 'click', function() {  
 		var fflag=0;
+		closeOpenDialogs();
 		changePassword(fflag);
 	});
 }
@@ -309,9 +314,59 @@ function passwordFormEventHandler() {
 * @return void
 * ----------------------------------------------------------
 */
-function accountFormEventHandler() {
+function updateAccountEventHandler() {
 	$('#login_dive').delegate('#ac_update', 'click', function() {  
 		var fflag=0;
-		accountUpdate(fflag);
+		closeOpenDialogs();
+		updateUserAccount(fflag);
+	});
+}
+/**
+* ----------------------------------------------------------
+* Handler to display form for primary parent to register alt parent
+* if it wasn't set up at the start
+* 
+*
+* @return void
+* ----------------------------------------------------------
+*/
+function registerAltParentEventHandler() {
+	$('#login_dive').delegate('#reg_alt', 'click', function() {  
+		var fflag=0;
+		closeOpenDialogs();
+		registerAltParent(fflag);
+	});
+}
+/**
+* ----------------------------------------------------------
+* Handler to display form for either parent to update children's
+* information. Form created dynamically on client side
+* 
+*
+* @return void
+* ----------------------------------------------------------
+*/
+function updateChildrenEventHandler() {
+	$('#login_dive').delegate('#chi_update', 'click', function() {  
+		var fflag=0;
+		closeOpenDialogs();
+		updateChildrenAccount(fflag);
+		//console.log(chidata);		
+	});
+}
+/**
+* ----------------------------------------------------------
+* Handler to display form for either parent to add a child to the
+* family account
+* 
+*
+* @return void
+* ----------------------------------------------------------
+*/
+function registerChildEventHandler() {
+	$('#login_dive').delegate('#reg_student', 'click', function() {  
+		var fflag=0;
+		closeOpenDialogs();
+		registerChild(fflag);
 	});
 }

@@ -130,7 +130,7 @@ function processLogoutUser(output) {
 	//displayLoginForm();
 	$('#login_dive').empty().html(output).show();	
 	$('#test_status').empty().html("Cool web stuff").show();
-	console.log("Logged out");
+	//console.log("Logged out");
 }
 /** 
 * --------------------------------------------------------

@@ -434,7 +434,7 @@ class Flexi_auth_lite_model extends CI_Model
 	{
 		$this->auth->session_data = FALSE;
 		
-		$this->load->model('flexi_auth_model');
+		//$this->load->model('flexi_auth_model');
 		$this->flexi_auth_model->login_remembered_user(); 
 		
 		return TRUE;

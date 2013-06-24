@@ -96,7 +96,7 @@ $autoload['config'] = array();
 |
 */
 
-$autoload['language'] = array('tank_auth');
+$autoload['language'] = array();
 
 
 /*
@@ -114,7 +114,8 @@ $autoload['model'] = array('testwell/testwell_portal_model','testwell/testwell_u
 							'testwell/testwell_resume_model','testwell/testwell_html_utils_model',
 							'tw_editor/tw_editor_utils_model',
 							'tw_editor/tw_editor_get_model','tw_editor/tw_editor_save_model',
-							'testwell/tw_auth_model','testwell/tw_admin_model','flexi_auth_model'
+							'testwell/tw_auth_model','testwell/tw_admin_model','testwell/tw_auth_utils_model',
+							'flexi_auth_lite_model','flexi_auth_model',
 						);
 
 

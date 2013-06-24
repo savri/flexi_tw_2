@@ -20,7 +20,7 @@ class Testwell_portal_model extends CI_Model {
 		$test=array();
 		
 		$in_table=TWELL_TEST_TAKE_TBL;
-		$user_id=$this->input->post('userId');
+		$user_id=$this->tw_auth_utils_model->get_current_user_id();
 		
 		//First get unique testIds for this user
 		$this->db->select('testId,startTimeDate,finishTimeDate,timedTest');

@@ -6,7 +6,7 @@
 			</li>
 			<li>
 				<label for="identity">Email:</label>
-				<input type="text" id="identity" name="login_identity" value="<?php echo set_value('login_identity', 'mayamisner@gmail.com');?>" class="tooltip_parent"/>
+				<input type="text" id="identity" name="login_identity" value="<?php echo set_value('login_identity', 'maya.srinivasan@oracle.com');?>" class="tooltip_parent"/>
 			</li>
 			<li>
 				<label for="password">Password:</label>

@@ -208,7 +208,7 @@ function get_mass_modify_question_from_qid(qid){
 	var q_row;
 	$.each(mmodify_local_q_arr,function(key,row){
 		if(row['questionId']==qid){
-			console.log(key,row['question']);
+			//console.log(key,row['question']);
 			q_row=row;
 			return false;//breaks out of the .each loop
 		}

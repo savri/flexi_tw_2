@@ -27,7 +27,7 @@ function generateNewTest(user_id,test_type) {
 	}else{
 		tt=0;
 	}
-	form_data='userId='+user_id+'&testType='+test_type+'&timed_test_mode='+tt;
+	form_data='testType='+test_type+'&timed_test_mode='+tt;
 	$.ajax({
         url: global_siteurl+'/testwell/testwell/get_new_test',
         data: form_data,
@@ -57,7 +57,7 @@ function processGenerateNewTest(output,test_type) {
 		clearSummary();
 		displayTest(output.test_data,test_type);
 		timed_test_mode=output.test_data['timed_test_mode'];
-		console.log("Time left="+output.test_data['time_left']);
+		//console.log("Time left="+output.test_data['time_left']);
 		cur_section=1;//global var
 		if (timed_test_mode==1) {
 			timer_init_time=output.test_data['time_left'];//timer_init_time used by displayTimer

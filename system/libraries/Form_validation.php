@@ -325,7 +325,8 @@ class CI_Form_validation {
 		{
 			// Fetch the data from the corresponding $_POST array and cache it in the _field_data array.
 			// Depending on whether the field name is an array or a string will determine where we get it from.
-
+			
+			
 			if ($row['is_array'] == TRUE)
 			{
 				$this->_field_data[$field]['postdata'] = $this->_reduce_array($_POST, $row['keys']);
@@ -337,7 +338,6 @@ class CI_Form_validation {
 					$this->_field_data[$field]['postdata'] = $_POST[$field];
 				}
 			}
-
 			$this->_execute($row, explode('|', $row['rules']), $this->_field_data[$field]['postdata']);
 		}
 

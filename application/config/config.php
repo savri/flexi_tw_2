@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/PHP-Exercises/FlexiAuth/testwell/';
+$config['base_url']	= 'http://localhost/PHP-Exercises/FlexiAuth/flexi_testwell/';
 //My config settings
 $config['server_root'] = $_SERVER['DOCUMENT_ROOT'];
 //For Flexiauth
@@ -29,7 +29,7 @@ $config['security']['static_salt']='TW_SALT';
 | we prefix any reference to images with this location so that the server can
 | resolve it
 */
-$config['img_loc'] = "http://localhost/PHP-Exercises/FlexiAuth/testwell/assets/image/images/";
+$config['img_loc'] = "http://localhost/PHP-Exercises/FlexiAuth/flexi_testwell/assets/image/images/";
 /*
 |--------------------------------------------------------------------------
 | Index File

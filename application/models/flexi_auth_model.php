@@ -845,7 +845,7 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 		}
 		
 		// Get identity columns.
-		$identity_cols = $this->auth->db_settings['identity_cols'];
+		$identity_cols = $this->auth->db_settings['identity_cols'];		
 				
 		// Loop through identity columns to try and find any duplicates in any of the columns.
 		$sql_where = '(';
@@ -854,9 +854,7 @@ class Flexi_auth_model extends Flexi_auth_lite_model
 			$sql_where .= $identity_cols[$i].' = '.$this->db->escape($identity).' OR ';
 		}
 		$sql_where = rtrim($sql_where,' OR ').')';
-
 		$this->db->where($sql_where, NULL, FALSE);
-			
 		return $this->db->count_all_results($this->auth->tbl_user_account) == 0;
 	}
 

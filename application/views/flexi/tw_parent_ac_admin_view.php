@@ -1,4 +1,4 @@
-<div id="account_update" style="background-color:white">
+<div id="account_update_form" style="background-color:MistyRose">
 	<fieldset>
 		<h2>Update Account</h2>
 
