@@ -2,8 +2,7 @@
 	<fieldset>
 		<h2>Add Alternate Parent</h2>
 
-		<div id="account_message_alt">
-		hello
+		<div id="account_message_alt" style="color:red">
 		</div>
 
 		<div id="account_body_alt">

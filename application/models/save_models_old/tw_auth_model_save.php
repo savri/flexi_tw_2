@@ -133,33 +133,11 @@ class Tw_auth_model extends CI_Model {
 	function register_family(){
 		
 		$this->load->library('form_validation');
-		/**
-		// Set validation rules.
-		// The custom rules 'identity_available' and 'validate_password' can be found in '../libaries/MY_Form_validation.php'.
-		$validation_rules = array(
-			array('field' => 'register_p_f_name', 'label' => 'First Name', 'rules' => 'trim|required|xss_clean'),
-			array('field' => 'register_p_l_name', 'label' => 'Last Name', 'rules' => 'trim|required|xss_clean'),
-			array('field' => 'register_add_line_1', 'label' => 'Address Line 1', 'rules' => 'trim|required|xss_clean'),
-			array('field' => 'register_add_line_2', 'label' => 'Address Line 2', 'rules' => 'trim|xss_clean'),
-			array('field' => 'register_city', 'label' => 'City', 'rules' => 'trim|required|xss_clean'),
-			array('field' => 'register_state', 'label' => 'State', 'rules' => 'trim|required|xss_clean'),
-			array('field' => 'register_zip', 'label' => 'Zip', 'rules' => 'numeric|required'),
-			array('field' => 'register_ph_number', 'label' => 'Phone Number', 'rules' => 'numeric|required'),
-			array('field' => 'register_pri_p_email', 'label' => 'Primary Parent Email ', 'rules' => 'required|valid_email|identity_available'),
-			array('field' => 'register_alt_p_email', 'label' => 'Alternate Parent Email', 'rules' => 'valid_email|identity_available'),
-			array('field' => 'register_s_f_name', 'label' => 'First Name', 'rules' => 'trim|required|xss_clean'),
-			array('field' => 'register_s_l_name', 'label' => 'Last Name', 'rules' => 'trim|required|xss_clean'),
-			array('field' => 'register_s_email', 'label' => 'Student Email', 'rules' => 'required|valid_email|identity_available'),
-			array('field' => 'register_s_grade', 'label' => 'Grade', 'rules' => 'numeric|required'),
-			array('field' => 'register_s_ttype', 'label' => 'Test Type', 'rules' => 'required'),
-		);
-		$this->form_validation->set_rules($validation_rules);
-		**/
 		$this->tw_auth_model->set_register_form_validation();
 		// Run the validation.
 		if ($this->form_validation->run())
 		{
-			$this->firephp->log("Validation ok!");
+			//$this->firephp->log("Validation ok!");
 			// Get parent details from input.
 			//Insert the parent primary and alt (if any)emails as users
 			//If this is successful, add to family_profile table
@@ -168,31 +146,9 @@ class Tw_auth_model extends CI_Model {
 			
 			//First create primary parent account
 			$pri_par_id=$this->create_primary_parent_account();
-			/**$email = $this->input->post('register_pri_p_email');
-			//By default, pw is same as email;group_id=1=parent
-			$pri_par_id=$this->register_account($email,$email,1);
-			$this->firephp->log("Parent userid= ".$pri_par_id);**/
 			if ($pri_par_id !=0) {
 				//Now that primary parent has an account, create family profile in family_profiel table
 				$fam_id=$this->create_family_profile();
-				/**$family_id=$this->uuid->v4();
-				$family_profile=array(
-					'familyId'=>$family_id,
-					'parentFirstName' => $this->input->post('register_p_f_name'),
-					'parentLastName' => $this->input->post('register_p_l_name'),
-					'familyAddress1' => $this->input->post('register_add_line_1'),
-					'familyAddress2' => $this->input->post('register_add_line_2'),
-					'familyCity' => $this->input->post('register_city'),
-					'familyState' => $this->input->post('register_state'),
-					'familyZip' => $this->input->post('register_zip'),
-					'familyPhone' => $this->input->post('register_ph_number'),
-					'parentPrimary_uacc_id' => $pri_par_id,
-					'parentAlt_uacc_id'=>0
-				);
-				$this->firephp->log($family_profile);
-				
-				$this->firephp->log("Family creation= ".$res);
-				**/
 				if ($fam_id==0){
 					$this->firephp->log("creation of family profile 
 											failed during registration. Problem!");
@@ -200,12 +156,12 @@ class Tw_auth_model extends CI_Model {
 				}
 				//Check to see if parentAltEmail was supplied; if so create that user
 				$email=$this->input->post('register_alt_p_email');
-				$this->firephp->log("Alt email is set to:".$email);
+				//$this->firephp->log("Alt email is set to:".$email);
 				
-				$this->firephp->log("Alt email exists:".isset($email));
+				//$this->firephp->log("Alt email exists:".isset($email));
 				if ((isset($email)) && trim($email)!='') {
 					$alt_par_id=$this->register_account($email,$email,1); //1-->Parent role in user_groups
-					$this->firephp->log("Alt Id=".$alt_par_id);
+					//$this->firephp->log("Alt Id=".$alt_par_id);
 					
 					if ($alt_par_id) {
 						//Add alt_par_id to family_id account
@@ -213,7 +169,7 @@ class Tw_auth_model extends CI_Model {
 							'parentAlt_uacc_id'=>$alt_par_id
 						);
 						$res=$this->add_alt_family_profile($family_id,$family_profile);
-						$this->firephp->log("Alt id addition= ".$res);
+						//$this->firephp->log("Alt id addition= ".$res);
 						
 						
 						if(!$res) {
@@ -230,9 +186,9 @@ class Tw_auth_model extends CI_Model {
 				}
 				//Now create user account for student
 				$email=$this->input->post('register_s_email');
-				$this->firephp->log("Student email= ".$email);
+				//$this->firephp->log("Student email= ".$email);
 				$stu_id=$this->register_account($email,$email,2);//2-->Student role in user_groups
-				$this->firephp->log("Student id= ".$stu_id);
+				//$this->firephp->log("Student id= ".$stu_id);
 				
 				if ($stu_id) {
 					//Add student's id into student_profile table associcated with family_id
@@ -245,15 +201,15 @@ class Tw_auth_model extends CI_Model {
 						'testType'=>$this->input->post('register_s_ttype'),
 					);
 					$res=$this->create_student_profile($student_profile);
-					$this->firephp->log("Creation stu profile= ".$res);
+					//$this->firephp->log("Creation stu profile= ".$res);
 					
 					if ($res) {
 						// Redirect user to login page if they have to accept activation
 						//redirect('auth');
 						//$this->load->view('testwell/testwell_portal_view');
 						
-						$this->firephp->log("Redirecting back to login page waiting for activation");
-						$this->firephp->log("Hooooooray! we made it");
+						//$this->firephp->log("Redirecting back to login page waiting for activation");
+						//$this->firephp->log("Hooooooray! we made it");
 						return TRUE;
 					} else {
 						//creation of student profile failed
@@ -365,7 +321,7 @@ class Tw_auth_model extends CI_Model {
 		$email = $this->input->post('register_pri_p_email');
 		//By default, pw is same as email;group_id=1=parent
 		$pri_par_id=$this->register_account($email,$email,1);
-		$this->firephp->log("Parent userid= ".$pri_par_id);
+		//$this->firephp->log("Parent userid= ".$pri_par_id);
 		return $pri_par_id;
 	}
 	/**
@@ -379,7 +335,7 @@ class Tw_auth_model extends CI_Model {
 		$this->db->where('familyId',$fam_id);
 		$this->db->update(TWELL_FAM_PROF_TBL,$prof_data);
 		if ($this->db->affected_rows() > 0) {
-			$this->firephp->log("Returning true from add_alt_family_profile");
+			//$this->firephp->log("Returning true from add_alt_family_profile");
 			return TRUE;
 
 		} else {
@@ -435,9 +391,9 @@ class Tw_auth_model extends CI_Model {
 	function activate_password() {
 		
 		$this->load->library('form_validation');
-		$this->firephp->log($this->input->post('current_password'));
-		$this->firephp->log($this->input->post('new_password'));
-		$this->firephp->log($this->input->post('confirm_new_password'));
+		//$this->firephp->log($this->input->post('current_password'));
+		//$this->firephp->log($this->input->post('new_password'));
+		//$this->firephp->log($this->input->post('confirm_new_password'));
 		
 		
 		// Set validation rules.
@@ -455,7 +411,7 @@ class Tw_auth_model extends CI_Model {
 			// Get password data from input.
 			$user_id=$this->input->post('act_user');
 			$identity = $this->get_user_email_from_id($user_id);
-			$this->firephp->log("user_id=".$user_id.";identity=".$identity);
+			//$this->firephp->log("user_id=".$user_id.";identity=".$identity);
 			$current_password = $this->input->post('current_password');
 			$new_password = $this->input->post('new_password');		
 				
@@ -508,14 +464,14 @@ class Tw_auth_model extends CI_Model {
 	 */
 	function get_user_id_from_email($email)
 	{
-		$this->firephp->log("email=".$email);
+		//$this->firephp->log("email=".$email);
 		
 		$this->db->select($this->flexi_auth->db_column('user_acc', 'id'));	
 		$this->db->where($this->flexi_auth->db_column('user_acc', 'email'),$email);	
 		$qres=$this->db->get('user_accounts');
 		if ($qres->num_rows() > 0) {
 			$row=$qres->row_array();
-			$this->firephp->log($row['uacc_id']."for email=".$email);
+			//$this->firephp->log($row['uacc_id']."for email=".$email);
 			return $row['uacc_id'];
 		} else {
 			$this->firephp->log("Could not determine user id from user email");

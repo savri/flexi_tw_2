@@ -22,7 +22,7 @@ class MY_Form_validation extends CI_Form_validation
     // Check email is available
     protected function email_available($email, $user_id = FALSE)
     {
-		$this->CI->firephp->log("Email= ".$email);
+		//$this->CI->firephp->log("Email= ".$email);
 		if (!$this->CI->flexi_auth->email_available($email, $user_id))
 		{
 			$status_message = $this->CI->lang->line('form_validation_duplicate_email');

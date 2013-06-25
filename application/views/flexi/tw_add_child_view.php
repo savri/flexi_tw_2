@@ -3,7 +3,7 @@
 		<fieldset>
 			<h2>Add Child to Family Account</h2>
 		</fieldset>
-		<div id="register_child_message">
+		<div id="register_child_message" style="color:red">
 		</div>
 		<fieldset>
 			<legend>Child Details</legend>
@@ -38,9 +38,9 @@
 						<?php
 							$js = 'id="register_s_ttype"';
 							$options=array(
-										'ISEE_LOW'=>'ISEE LOW',
-										'ISEE_MED'=>'ISEE MEDIUM',
-										'ISEE_HIGH'=>'ISEE HIGH',
+										'ISEE_LOW'=>'ISEE_LOW',
+										'ISEE_MED'=>'ISEE_MED',
+										'ISEE_HIGH'=>'ISEE_HIGH',
 										);
 							echo form_dropdown('register_s_ttype',$options,'',$js);
 						?>(required)

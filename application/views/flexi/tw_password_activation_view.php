@@ -1,7 +1,7 @@
 <div id="pw_update">
 	<h2>Account Activation</h2>
 
-	<div id="pw_update_message">
+	<div id="pw_update_message" style="color:red">
 	</div>
 	<div id="pw_update_body">
 		<?php echo form_open(current_url());	?>  	

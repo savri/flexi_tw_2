@@ -209,7 +209,7 @@ function registerUserEventHandler() {
 		fdata+='&register_s_email='+$('#s_email').val();
 		fdata+='&register_s_grade='+$('#s_grade').val();
 		fdata+='&register_s_ttype='+$('#s_ttype option:selected').val();
-		//console.log(fdata);
+		console.log(fdata);
 		registerUser(fdata,1);
 	});
 }

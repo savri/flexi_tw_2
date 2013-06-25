@@ -20,7 +20,7 @@ class Testwell_new_model extends CI_Model {
 		$ans_arr=array();
 		
 		$user_id=$this->tw_auth_utils_model->get_current_user_id();
-		$this->firephp->log("The user's id is=".$user_id);
+		//$this->firephp->log("The user's id is=".$user_id);
 		
 		$test_type=$this->input->post('testType');
 		//$this->firephp->log($test_type);
@@ -40,12 +40,6 @@ class Testwell_new_model extends CI_Model {
 				//For each topic get questions from question_bank
 				//$this->firephp->log("about to get questions");
 				$q_status=$this->get_new_questions($sect_arr,$top_arr,$q_arr,$p_arr);
-				
-				//$q_arr=$qdata['questions'];
-				//$p_arr=$qdata['passages'];
-				//$this->firephp->log("Questions from new model= ".$q_arr);
-				//$this->firephp->log(count($q_arr));
-				//$this->firephp->log($qdata['questions']);
 				
 				//Now get answer choices for each of the questions
 				if (count($q_arr)) {
@@ -67,7 +61,7 @@ class Testwell_new_model extends CI_Model {
 			//Also update the user's tests_taken table with this testId
 			//$this->firephp->log("About to record generated test");
 			$current_test_id=$this->testwell_record_model->record_generated_test($test_type,$q_arr,$p_arr);
-			$this->firephp->log("Test created for userid= ".$user_id);
+			//$this->firephp->log("Test created for userid= ".$user_id);
 			$this->testwell_record_model->record_test_taken_for_user($user_id,
 											$sect_arr,$current_test_id,$test_type,$this->input->post('timed_test_mode'));
 			

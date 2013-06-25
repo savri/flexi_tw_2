@@ -164,22 +164,10 @@ class Tw_admin_model extends CI_Model {
 					//Now update primary parent email if it has changed from what's on record
 					//$this->firephp->log($this->input->post('update_pri_p_email'));
 					$res=$this->update_pri_par_email($cur_id,);
-					/**$old_pri_p_email=$this->tw_auth_utils_model->get_user_email_from_id($cur_id);
-					$eres=strcmp($old_pri_p_email,$this->input->post('update_pri_p_email'));
-					//$this->firephp->log("REsult of old/new email pri comp= ".$eres);
-					if ($eres !=0) {
-						$res=$this->update_email($cur_id,$this->input->post('update_pri_p_email'));
-						if (!$res) {
-							//$this->firephp->log($this->db->_error_message());
-							//$this->firephp->log($this->db->_error_number());
-							$this->firephp->log("Issues during update of primary parent email  Problem!");
-							return FALSE;
-						}
-					}**/
+	
 					//If there is an alt parent email that can be updated it do it
 					$alt_par_id=$this->tw_auth_utils_model->alt_par_exists($cur_id);
 					if ($alt_par_id>0){
-						//$alt_par_id=$this->get_alt_parent_id($cur_id);
 						$old_alt_p_email=$this->tw_auth_utils_model->get_user_email_from_id($alt_par_id);
 						$eres=strcmp($old_alt_p_email,$this->input->post('update_alt_p_email'));
 						//$this->firephp->log("REsult of old/new email alt comp= ".$eres);
@@ -193,13 +181,13 @@ class Tw_admin_model extends CI_Model {
 							}
 						}
 					}
-					$this->firephp->log("Returning success from update account");
+					//$this->firephp->log("Returning success from update account");
 					return TRUE;
 				} else if ($is_primary_par==2) {
 					//$cur_id belongs to alt parent
-					$this->firephp->log("alt parent");
+					//$this->firephp->log("alt parent");
 					$res=$this->update_family_profile('parentAlt_uacc_id',$cur_id,$data);
-					$this->firephp->log("Update family profile result= ".$res);
+					//$this->firephp->log("Update family profile result= ".$res);
 					if (!$res) {
 						//$this->firephp->log($this->db->_error_message());
 						//$this->firephp->log($this->db->_error_number());
@@ -263,7 +251,7 @@ class Tw_admin_model extends CI_Model {
 			}
 		}		
 		// Set validation errors.
-		$this->firephp->log(validation_errors('<p class="error_msg">', '</p>'));
+		//$this->firephp->log(validation_errors('<p class="error_msg">', '</p>'));
 		$this->data['message'] = validation_errors('<p class="error_msg">', '</p>');
 		return FALSE;	
 	}
@@ -327,10 +315,9 @@ class Tw_admin_model extends CI_Model {
 	function update_family_profile($which_parent,$id,$data){
 		$this->db->where($which_parent,$id);
 		//$this->firephp->log("Updating family profile");
-		$this->firephp->log($data);
+		//$this->firephp->log($data);
 		$res=$this->db->update(TWELL_FAM_PROF_TBL,$data);
-		$this->firephp->log("Res=".$res);
-		
+		//$this->firephp->log("Res=".$res);
 		return $res;
 		
 	}
@@ -340,7 +327,7 @@ class Tw_admin_model extends CI_Model {
 	* Return true/false
 	**/
 	function update_student_profile($id,$data){
-		$this->firephp->log("Student profile update");
+		//$this->firephp->log("Student profile update");
 		$this->db->where('uacc_id',$id);
 		return ($this->db->update(TWELL_STU_PROF_TBL,$data));
 	}

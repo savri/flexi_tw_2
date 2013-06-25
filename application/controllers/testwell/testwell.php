@@ -337,7 +337,7 @@ class Testwell extends CI_Controller {
 				$output['message']=$this->flexi_auth->get_messages();				
 				$output['status']=TRUE;
 			} else {
-				$output['message']=$this->data['message'];
+				$output['message']=$this->data['message'];//??
 				$output['status']=FALSE;	
 			}
 
@@ -381,7 +381,8 @@ class Testwell extends CI_Controller {
 		$pw_data['token']=$token;
 		//$data['admin_content']=$this->load->view("flexi/password_activation_view",NULL,TRUE);
 		$data['admin_content']=$this->load->view("flexi/tw_password_activation_view",$pw_data,TRUE);
-		
+		//$data['login_content']=$this->load->view('flexi/tw_login_view',NULL,TRUE);
+		//$this->firephp->log($data);
 		$this->load->view("includes-tw/tw_header");
 		$this->load->view("testwell/testwell_portal_view",$data);
 		$this->load->view("includes-tw/tw_footer");
@@ -566,7 +567,7 @@ class Testwell extends CI_Controller {
 			if ($ret) {			
 				//$this->firephp->log("Hooray");
 				$output['status']=TRUE;
-				$output['message']="Well done";
+				$output['message']="Child successfully added to account";
 			} else {
 				$output['status']=FALSE;
 				$output['message']=$this->data['message'];

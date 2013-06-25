@@ -18,9 +18,9 @@ class Tw_admin_model extends CI_Model {
 	**/
 	function get_user_account_info(&$user_data){
 		$id=$this->tw_auth_utils_model->get_current_user_id();
-		$this->firephp->log("Id=".$id);
+		//$this->firephp->log("Id=".$id);
 		$role=$this->tw_auth_utils_model->get_user_role($id);
-		$this->firephp->log("role=".$role);
+		//$this->firephp->log("role=".$role);
 		
 		if($role=="Parent"){
 			$user_data['group']="Parent";

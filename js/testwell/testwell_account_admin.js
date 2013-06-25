@@ -85,10 +85,10 @@ function processChangePassword(fflag,output) {
 		});
 	} else {
 		if (output.status){
-			$('#pw_change_message').html(output.message).show();
+			$('#pw_chg_message').html(output.message).show();
 			
 		} else {
-			$('#pw_change_message').html(output.message).show();
+			$('#pw_chg_message').html(output.message).show();
 		}
 	}
 }
@@ -413,7 +413,7 @@ function get_children_ac_form_data(){
 		fdata+='&child_s_email'+i+'='+$(c_email).val();
 		fdata+='&child_s_ttype'+i+'='+$(c_ttype).val();
 	}
-	console.log(fdata);
+	//console.log(fdata);
 	return fdata;
 }
 /** 
@@ -427,7 +427,7 @@ function get_children_ac_form_data(){
 **/
 function displayChildrenData(){
 	var html_str="";
-	html_str='<div id="children_ac_form" style="background-color:pink">';
+	html_str='<div id="children_ac_form" style="background-color:MistyRose">';
 	html_str+='<fieldset>';
 	html_str+='<h2>Update Children Account</h2>';
 	html_str+='<div id="children_ac_message" style="color:red">';
@@ -478,7 +478,7 @@ function displayChildrenData(){
 			html_str+='<option value="ISEE_HIGH">ISEE_HIGH</option>';
 		} else if (crow.ttype=='ISEE_MED'){
 			html_str+='<option value="ISEE_LOW">ISEE_LOW</option>';
-			html_str+='<option selected="ISEE_MED" value="ISEE_MED">ISEE_MED</option>';
+			html_str+='<option selected="ISEE_MED" value="ISEE_MED">ISEE MED</option>';
 			html_str+='<option value="ISEE_HIGH">ISEE_HIGH</option>';
 		} else if (crow.ttype=='ISEE_HIGH'){
 			html_str+='<option value="ISEE_LOW">ISEE_LOW</option>';

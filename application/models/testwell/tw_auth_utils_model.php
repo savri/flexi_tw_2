@@ -73,7 +73,7 @@ class Tw_auth_utils_model extends CI_Model {
 		$qres=$this->db->get('user_accounts');
 		if ($qres->num_rows() > 0) {
 			$row=$qres->row_array();
-			$this->firephp->log($row['uacc_id']."for email=".$email);
+			//$this->firephp->log($row['uacc_id']."for email=".$email);
 			return $row['uacc_id'];
 		} else {
 			$this->firephp->log("Could not determine user id from user email");
@@ -88,8 +88,8 @@ class Tw_auth_utils_model extends CI_Model {
 	function get_current_user_id(){
 		$sd=$this->session->all_userdata();
 		$fa=$sd['flexi_auth'];
-		$this->firephp->log($fa);
-		$this->firephp->log($fa['user_id']);
+		//$this->firephp->log($fa);
+		//$this->firephp->log($fa['user_id']);
 		//$this->firephp->log("Current user= ".intval($fa['user_id']));
 		return $fa['user_id'];
 	}
@@ -107,10 +107,10 @@ class Tw_auth_utils_model extends CI_Model {
 		if ($res->num_rows()==1) {
 			$fam_profile=$res->row();
 			If (intval($fam_profile->parentPrimary_uacc_id)==intval($p_id)) {
-				$this->firephp->log("Primary parent!");
+				//$this->firephp->log("Primary parent!");
 				return 1;
 			} else {
-				$this->firephp->log("Alt parent!");
+				//$this->firephp->log("Alt parent!");
 				return 2;
 			}
 		} else {
@@ -226,7 +226,7 @@ class Tw_auth_utils_model extends CI_Model {
 		$qres=$this->db->get(TWELL_FAM_PROF_TBL);
 		if ($qres->num_rows()==1) {
 			$row=$qres->row();
-			$this->firephp->log("Familyid=".$row->familyId);
+			//$this->firephp->log("Familyid=".$row->familyId);
 			$fam_id=$row->familyId;
 		}else{
 			$this->firephp->log("Could not retrieve family id");

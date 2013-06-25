@@ -2,7 +2,7 @@
 	<fieldset>
 		<h2>Update Account</h2>
 
-		<div id="account_message">
+		<div id="account_message" style="color:red">
 		</div>
 
 		<div id="account_body">

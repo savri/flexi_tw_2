@@ -108,9 +108,9 @@
 						<?php
 							$js = 'id="s_ttype"';
 							$options=array(
-										'ISEE_LOW'=>'ISEE LOW',
-										'ISEE_MED'=>'ISEE MEDIUM',
-										'ISEE HIGH'=>'ISEE HIGH',
+										'ISEE_LOW'=>'ISEE_LOW',
+										'ISEE_MED'=>'ISEE_MED',
+										'ISEE HIGH'=>'ISEE_HIGH',
 										);
 							echo form_dropdown('register_s_ttype',$options,'',$js);
 						?>(required)

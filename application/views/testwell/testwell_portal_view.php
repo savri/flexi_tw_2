@@ -10,7 +10,6 @@
 		<?php if (! empty($login_message)) echo $login_message;?>
 	</div>
 	<div id="login_body" align="right">
-		<ul></ul>
 	</div>
 </div>
 <hr>

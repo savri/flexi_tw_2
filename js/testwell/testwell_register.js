@@ -26,7 +26,7 @@ function processRegisterUser(output,reg_user) {
 	} else {
 		if (output.status) {
 			$('#register_body').empty();
-			$('#login_dive').hide();
+			//$('#login_dive').hide();
 			scrollToTop('#register_message');
 			$('#register_message').html("Registration successful!");
 			$('#register_message').append(output.message).show();
@@ -84,7 +84,7 @@ function processRegisterAltParent(fflag,output) {
 	if (fflag==0){
 		//$('#test_sections').html("");
 		$('#account_admin_div').html(output).hide();
-		$("#account_update_alt").dialog({
+		$("#add_alt_form").dialog({
 		    closeOnEscape: false,
 			open: function(event, ui) { $(".ui-dialog-titlebar-close", ui.dialog).hide(); },
 			modal: true,
@@ -110,7 +110,8 @@ function processRegisterAltParent(fflag,output) {
 		$('#account_message_alt').html("");
 		
 		if (output.status){
-			$('#account_message_alt').append(output.message).show();
+			
+			$('#account_message_alt').append("<b>"+output.message+"</b>").show();
 			
 		} else {
 			$('#account_message_alt').append(output.message).show();
